@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>梅問題範例展示「Flot圓餅圖」</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" type="image/png" href="http://example.com/myicon.png">
+	
+    <style type="text/css">
+        #flotcontainer {
+            width: 700px;
+            height: 600px;
+        }
+    </style>
+</head>
+<body>
+<!-- HTML -->
+<div id="legendPlaceholder"></div>
+<div id="flotcontainer"></div>
+<hr>  
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="flot/jquery.flot.min.js"></script>
+<script src="flot/jquery.flot.pie.min.js"></script>
+ 
+<!-- Javascript -->
+<script type="text/javascript">
+
+    $.getJSON( "https://raw.githubusercontent.com/a26796879/TW_vote_data/main/2020%E4%B8%8D%E5%88%86%E5%8D%80-%E5%8F%B0%E5%8D%97(add%20%E6%B3%9B%E8%97%8D%E6%B3%9B%E7%B6%A0).json", function( data ) {
+        console.log(data); // this will show the info it in firebug console
+        var total = data['民主進步黨']['0'] + data['台灣基進']['0']  + data['中國國民黨']['0']  + data['時代力量']['0'] 
+        console.log(data['台灣基進']['0']); // this will show the info it in firebug console
+        console.log(data['民主進步黨']['0']/total*100); // this will show the info it in firebug console
+        console.log(data['村里別']['0']); // this will show the info it in firebug console
+        console.log(Object.keys(data)); // this will show the info it in firebug console(
+
+        var a = Object.keys(data)
+        //var obj = JSON.parse(a);
+        //console.log(Object.keys(data)); // this will show the info it in firebug console(
+/*
+var select = document.createElement('SELECT')
+select.name="optCountry" 
+select.id="opt_country"
+document.body.appendChild(select)
+
+Object.keys(obj).forEach(function(a){
+document.getElementById('opt_country').innerHTML +='<option value="'+a+'">'+obj[a]+'</option>'
+*/
+    var data = [
+      {label: "民主進步黨", data: data['民主進步黨']['0']/total*100},
+      {label: "台灣基進", data: data['台灣基進']['0']/total*100},
+      {label: "中國國民黨", data: data['中國國民黨']['0']/total*100},
+      {label: "時代力量", data: data['時代力量']['0']/total*100},
+      {label: "親民黨", data: data['親民黨']['0']/total*100},
+      {label: "台灣民眾黨", data: data['台灣民眾黨']['0']/total*100},
+      {label: "綠黨", data: data['綠黨']['0']/total*100},
+      {label: "台灣團結聯盟", data: data['台灣團結聯盟']['0']/total*100}
+    ];
+
+    var options = {
+     series: {
+        pie: {
+            innerRadius: 0.5,
+            show: true
+        }
+    }}
+    $.plot($("#flotcontainer"), data, options);  
+
+var Ajax = function ()
+    {
+        $.getJSON ("json_demo.json", function (data)
+        {
+            $.each (data, function (i, item)
+            {
+                $ ("#disp").append ("<h3>" + item.name + "</h3>");
+                $ ("#disp").append ("<p>" + item.age + "</p>");
+				$ ("#disp").append ("<p>" + item.pets + "</p>");
+            });
+        });
+    }
+
+
+
+function showMessage() {
+    if (document.getElementById('selectID').options[document.getElementById('selectID').selectedIndex].value == 1) {
+        alert('你好，你選擇了第 1 個');
+    }
+    else if (document.getElementById('selectID').options[document.getElementById('selectID').selectedIndex].value == 2) {
+        alert('你好，你選擇了第 2 個');
+    }
+  }
+
+})
+</script>
+    <p id="demo"></p>
+    <p id="demoooo"></p>
+    <p id="demooooooo"></p>
+    <select id='selectID' onchange=showMessage();>
+        <option value='0'>==請選擇==</option>
+        <option value='1'>是</option>
+        <option value='2'>否</option>
+   </select>
+   
+</body>
+</html>

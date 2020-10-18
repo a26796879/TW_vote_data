@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<!-- saved from url=(0054)https://www.chartjs.org/samples/latest/charts/pie.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style class="vjs-styles-defaults">
+      .video-js {
+        width: 300px;
+        height: 150px;
+      }
+
+      .vjs-fluid {
+        padding-top: 56.25%
+      }
+    </style>
+	<title>Pie Chart</title>
+	<script async="" src="./Pie Chart_files/analytics.js.下載"></script><script src="./Pie Chart_files/Chart.min.js.下載"></script>
+	<script src="./Pie Chart_files/utils.js.下載"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="flot/jquery.flot.min.js"></script>
+<script src="flot/jquery.flot.pie.min.js"></script>
+<script src="chrome-extension://jhffgcfmcckgmioipfnmbannkpncfipo/util.js"></script><script src="chrome-extension://jhffgcfmcckgmioipfnmbannkpncfipo/pagejs.js"></script><script src="chrome-extension://mooikfkahbdckldjjndioackbalphokd/assets/prompt.js"></script><style type="text/css">/* Chart.js */
+@keyframes chartjs-render-animation{from{opacity:.99}to{opacity:1}}.chartjs-render-monitor{animation:chartjs-render-animation 1ms}.chartjs-size-monitor,.chartjs-size-monitor-expand,.chartjs-size-monitor-shrink{position:absolute;direction:ltr;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1}.chartjs-size-monitor-expand>div{position:absolute;width:1000000px;height:1000000px;left:0;top:0}.chartjs-size-monitor-shrink>div{position:absolute;width:200%;height:200%;left:0;top:0}</style></head>
+ 
+<body>
+	<div id="canvas-holder" style="width:40%"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+		<canvas id="chart-area" style="display: block; width: 1018px; height: 509px;" width="1018" height="509" class="chartjs-render-monitor"></canvas>
+	</div>
+	<button id="randomizeData">Randomize Data</button>
+	<button id="addDataset">Add Dataset</button>
+	<button id="removeDataset">Remove Dataset</button>
+	<script>
+function getall(){
+	$.getJSON( "https://raw.githubusercontent.com/a26796879/TW_vote_data/main/2020%E4%B8%8D%E5%88%86%E5%8D%80-%E5%8F%B0%E5%8D%97(add%20%E6%B3%9B%E8%97%8D%E6%B3%9B%E7%B6%A0).json", function( data ) {
+				console.log(data); // this will show the info it in firebug console
+				var total = data['民主進步黨']['0'] + data['台灣基進']['0']  + data['中國國民黨']['0']  + data['時代力量']['0'] 
+				console.log(data['台灣基進']['0']); // this will show the info it in firebug console
+				console.log(data['民主進步黨']['0']/total*100); // this will show the info it in firebug console
+				console.log(data['民主進步黨']['13']/total*100); // this will show the info it in firebug console
+				console.log(data['村里別']['0']); // this will show the info it in firebug console
+				console.log(Object.keys(data)); // this will show the info it in firebug console(
+					
+				console.log(typeof(Object.keys(data).splice(2,19)));
+				console.log(data['村里別']);
+				console.log(Object.keys(data['村里別']).length);
+				var village = []
+				for(var i = 0; i < Object.keys(data['村里別']).length; i++) {
+					village.push(data['村里別'][i])
+				}
+				console.log(village);
+				
+				var select = document.getElementById("selectNumber"); 
+				for(var i = 0; i < village.length; i++) {
+					var opt = village[i];
+					var el = document.createElement("option");
+					el.textContent = opt;
+					el.value = opt;
+					select.appendChild(el);}
+				})
+}
+
+console.log(getall()['鄉(鎮、市、區)別']); // this will show the info it in firebug console
+/*
+		var randomScalingFactor = function() {
+			return Math.round(Math.random() * 100);
+		};
+		var config = {
+			type: 'pie',
+			data: {
+				datasets: [{
+					data: [
+						data['民主進步黨']['0']/total*100,
+						data['台灣基進']['0']/total*100,
+						data['中國國民黨']['0']/total*100,
+						data['時代力量']['0']/total*100,
+						data['親民黨']['0']/total*100
+					],
+					backgroundColor: [
+						window.chartColors.green,
+						window.chartColors.orange,
+						window.chartColors.blue,
+						window.chartColors.red,
+						window.chartColors.yellow,
+					],
+					label: 'Dataset 1'
+				}],
+				labels: [
+					"民主進步黨", '台灣基進','中國國民黨',"時代力量","親民黨"
+					]
+				},
+			options: {
+				responsive: true
+			}
+		};
+		
+		window.onload = function() {
+			var ctx = document.getElementById('chart-area').getContext('2d');
+			window.myPie = new Chart(ctx, config);
+		};
+
+		document.getElementById('randomizeData').addEventListener('click', function() {
+			config.data.datasets.forEach(function(dataset) {
+				dataset.data = dataset.data.map(function() {
+					return randomScalingFactor();
+				});
+			});
+
+			window.myPie.update();
+		});
+
+		var colorNames = Object.keys(window.chartColors);
+		document.getElementById('addDataset').addEventListener('click', function() {
+			var newDataset = {
+				backgroundColor: [],
+				data: [],
+				label: 'New dataset ' + config.data.datasets.length,
+			};
+
+			for (var index = 0; index < config.data.labels.length; ++index) {
+				newDataset.data.push(randomScalingFactor());
+
+				var colorName = colorNames[index % colorNames.length];
+				var newColor = window.chartColors[colorName];
+				newDataset.backgroundColor.push(newColor);
+			}
+
+			config.data.datasets.push(newDataset);
+			window.myPie.update();
+		});
+
+		document.getElementById('removeDataset').addEventListener('click', function() {
+			config.data.datasets.splice(0, 1);
+			window.myPie.update();
+		});
+
+*/
+function showMessage() {
+	alert(document.getElementById('selectNumber').value)
+	getall(document.getElementById('selectNumber').value);
+}
+
+
+	</script>
+<select id="selectNumber" onchange=showMessage();>
+    <option>Choose a number</option>
+</select>
+
+
+</body></html>
