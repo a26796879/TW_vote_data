@@ -20,19 +20,25 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.pie.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/javascript.util/0.12.12/javascript.util.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/page.js/1.11.6/page.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/underscore@1.11.0/underscore-min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.2/js/umd/util.js"></script>
 <!--<script src="chrome-extension://mooikfkahbdckldjjndioackbalphokd/assets/prompt.js"></script>-->
 <style type="text/css">/* Chart.js */
 @keyframes chartjs-render-animation{from{opacity:.99}to{opacity:1}}.chartjs-render-monitor{animation:chartjs-render-animation 1ms}.chartjs-size-monitor,.chartjs-size-monitor-expand,.chartjs-size-monitor-shrink{position:absolute;direction:ltr;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1}.chartjs-size-monitor-expand>div{position:absolute;width:1000000px;height:1000000px;left:0;top:0}.chartjs-size-monitor-shrink>div{position:absolute;width:200%;height:200%;left:0;top:0}</style></head>
 <body>
-	<div id="canvas-holder" style="width:40%"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div>
+	<div id="canvas-holder" style="width:60%; position: absolute;top: 40px; left: 10px;"><div class="chartjs-size-monitor" ><div class="chartjs-size-monitor-expand"><div class=""></div></div>
 	<div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
 		<canvas id="chart-area" style="display: block; width: 1018px; height: 509px;" width="1018" height="509" class="chartjs-render-monitor"></canvas>
 	</div>
-	<div id="canvas-holder-2" style="width:40%"><div class="chartjs-size-monitor-2"><div class="chartjs-size-monitor-expand-2"><div class=""></div></div>
+	<div id="canvas-holder-2" style="width:40%; position: absolute;top: 40px; left: 800px;"><div class="chartjs-size-monitor-2"><div class="chartjs-size-monitor-expand-2"><div class=""></div></div>
 	<div class="chartjs-size-monitor-shrink-2"><div class=""></div></div></div>
-		<canvas id="chart-area-2" style="display: block; width: 1018px; height: 509px;" width="1018" height="509" class="chartjs-render-monitor-2"></canvas>
+		<canvas id="chart-area-2" style="display: block; width: 1018px; height: 509px; " width="1018" height="509" class="chartjs-render-monitor-2"></canvas>
 	</div>
+	<div id="canvas-holder-3" style="width:40%; position: absolute;top: 400px; left: 800px;"><div class="chartjs-size-monitor-3"><div class="chartjs-size-monitor-expand-3"><div class=""></div></div>
+	<div class="chartjs-size-monitor-shrink-3"><div class=""></div></div></div>
+		<canvas id="chart-area-3" style="display: block; width: 1018px; height: 509px;" width="1018" height="509" class="chartjs-render-monitor-3"></canvas>
+	</div>
+	
 	<select id="get_country"></select>
 	<script>
 //console.log(getall()); // this will show the info it in firebug console
@@ -64,82 +70,80 @@ var select = document.getElementById("get_country");
 		select.appendChild(el);}
 console.log(data['村里別']); // this will show the info it in firebug console
 console.log(typeof(data['村里別'])); // this will show the info it in firebug console
-console.log(data);
-console.log(Object.keys(data));
+
 var AllPartys = Object.keys(data).splice(2,19)
-console.log(AllPartys);
-console.log(AllPartys[0]);
+var AllPartys_without_BG = _.without(AllPartys, "中國國民黨","民主進步黨")
+
 AllPartys_total = []
 for(var i = 0; i < AllPartys.length; i++) {
 	AllPartys_total.push(data[AllPartys[i]]['0'])
 }
-
-console.log(AllPartys_total);
+AllPartys_total_without_BG = []
+for(var i = 0; i < AllPartys.length; i++) {
+	if(AllPartys[i] == "民主進步黨" || AllPartys[i] == "中國國民黨"){
+		//pass
+	}
+	else{AllPartys_total_without_BG.push(data[AllPartys[i]]['0'])}
+}
 var config = {
-			type: 'pie',
-			data: {
-				datasets: [{
-					data: AllPartys_total,
-					backgroundColor: [
-						'#996633','#000080','#FF6310','#633f99','#A73f24','#F9BE01',
-						'#FFDB00','#009e96','#000095','#5BBEDE','#FF0000','#99E64D',
-						'#EAD9A5','green','#28C8C8','#51458B','#77AEA5','#FFEA00',
-						'#AB6300'
-						/*window.chartColors.green,
-						window.chartColors.orange,
-						window.chartColors.blue,
-						window.chartColors.red,
-						window.chartColors.yellow,
-						window.chartColors.aqua,
-						window.chartColors.white,
-						window.chartColors.brown,
-						window.chartColors.red,
-						window.chartColors.purple,
-						window.chartColors.green,
-						window.chartColors.coral,
-						window.chartColors.maroon,
-						window.chartColors.pink,
-						window.chartColors.navy,
-						window.chartColors.black,
-						window.chartColors.grey,
-						window.chartColors.amber,*/
-					],
-					label: 'Dataset 2'
-				}],
-				labels: AllPartys
-				},
-			options: {
-				responsive: true
-			}
-		};
+	type: 'pie',
+	data: {
+		datasets: [{
+			data: AllPartys_total,
+			backgroundColor: [
+			'#996633','#000080','#FF6310','#633f99','#A73f24','#F9BE01',
+			'#FFDB00','#009e96','#000095','#5BBEDE','#FF0000','#99E64D',
+			'#EAD9A5','green','#28C8C8','#51458B','#77AEA5','#FFEA00','#AB6300'
+			],
+			label: 'Dataset 1'
+			}],
+			labels: AllPartys
+			},
+		options: {
+			responsive: true
+		}
+	};
 var config_2 = {
-			type: 'pie',
-			data: {
-				datasets: [{
-					data: [
-						data['泛藍']['0'],
-						data['泛綠']['0']
-					],
-					backgroundColor: [
-						/*window.chartColors.blue,
-						window.chartColors.green*/
-						'blue','green'
-					],
-					label: 'Dataset 1'
-				}],
-				labels: [
-				'泛藍',"泛綠"
-					]
-				},
-			options: {
-				responsive: true
-			}
-		};		
+	type: 'pie',
+	data: {
+		datasets: [{
+			data: [
+				data['泛藍']['0'],data['泛綠']['0']
+			],
+			backgroundColor: ['blue','green'],
+			label: 'Dataset 2'
+		}],
+		labels: ['泛藍',"泛綠"]
+	},
+	options: {
+		responsive: true
+		}
+	};		
+var config_3 = {
+	type: 'pie',
+	data: {
+		datasets: [{
+			data: AllPartys_total_without_BG,
+			backgroundColor: [
+			'#996633','#000080','#FF6310','#633f99','#A73f24','#F9BE01',
+			'#FFDB00','#009e96','#5BBEDE','#FF0000','#99E64D','#EAD9A5',
+			'#28C8C8','#51458B','#77AEA5','#FFEA00','#AB6300'
+			],
+			label: 'Dataset 3'
+		}],
+		labels: AllPartys_without_BG
+		},
+	options: {
+		responsive: true
+	}
+};	
 		window.onload = function() {
 			var ctx = document.getElementById('chart-area').getContext('2d');
 			window.myPie = new Chart(ctx, config);
 			var ctx2 = document.getElementById('chart-area-2').getContext('2d');
 			window.myPie2 = new Chart(ctx2, config_2);
+			var ctx3 = document.getElementById('chart-area-3').getContext('2d');
+			window.myPie3 = new Chart(ctx3, config_3);
 		};
 var activities = document.getElementById("get_country");
 
@@ -151,6 +155,12 @@ activities.addEventListener("change", function() {
 	for(var i = 0; i < AllPartys.length; i++) {
 		AllPartys_each_value.push(data[AllPartys[i]][village.indexOf(activities.value)])
 	}
+	AllPartys_each_value_without_BG = []
+	for(var i = 0; i < AllPartys.length; i++) {
+		if(AllPartys[i] == "民主進步黨" || AllPartys[i] == "中國國民黨"){
+		}
+		else{AllPartys_each_value_without_BG.push(data[AllPartys[i]][village.indexOf(activities.value)])}
+	}
 	//data['民主進步黨'][village.indexOf(activities.value)]
 	config.data.datasets.forEach(function(dataset) {
 		dataset.data = AllPartys_each_value
@@ -161,8 +171,12 @@ activities.addEventListener("change", function() {
 						data['泛綠'][village.indexOf(activities.value)]
 					]
 	});
+	config_3.data.datasets.forEach(function(dataset) {
+		dataset.data = AllPartys_each_value_without_BG
+	});
 	window.myPie.update();
 	window.myPie2.update();
+	window.myPie3.update();
 });
 
 </script>
