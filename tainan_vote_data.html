@@ -36,7 +36,9 @@
 	<div class="chartjs-size-monitor-shrink-3"><div class=""></div></div></div>
 		<canvas id="chart-area-3" style="display: block; width: 1018px; height: 509px;" width="1018" height="509" class="chartjs-render-monitor-3"></canvas>
 	</div>
+	<select id="get_city"><option>臺南市</option></select>
 	<select id="get_country"></select>
+
 	<script>
 function get_subcount(chan_url) {
     var subcount;
@@ -50,20 +52,71 @@ function get_subcount(chan_url) {
     });
     return subcount
 }
-data = JSON.parse(get_subcount("https://raw.githubusercontent.com/a26796879/TW_vote_data/main/2020%E4%B8%8D%E5%88%86%E5%8D%80-%E5%AE%9C%E8%98%AD%E7%B8%A3(add%20%E6%B3%9B%E8%97%8D%E6%B3%9B%E7%B6%A0).json"))
-console.log(data['台灣基進']['0']); // this will show the info it in firebug console
+var citylist = ['臺北市','新北市','桃園市','臺中市','高雄市','基隆市','新竹市','嘉義市','新竹縣','苗栗縣','彰化縣','南投縣','雲林縣','嘉義縣','屏東縣','宜蘭縣','花蓮縣','臺東縣','澎湖縣','金門縣','連江縣']
+var select_city = document.getElementById("get_city"); 
+	for(var i = 0; i < citylist.length; i++) {
+		var opt = citylist[i];
+		var el = document.createElement("option");
+		el.textContent = opt;
+		el.value = opt;
+		select_city.appendChild(el);}
+
+var get_city_activities = document.getElementById("get_city");
+get_city_activities.addEventListener("change", function() {
+	var city_name_in_url = encodeURIComponent(select_city.value);
+	data = JSON.parse(get_subcount("https://raw.githubusercontent.com/a26796879/TW_vote_data/main/data/2020-%E4%B8%8D%E5%88%86%E5%8D%80%E7%AB%8B%E5%A7%94/2020%E4%B8%8D%E5%88%86%E5%8D%80-"+ city_name_in_url +"(add%20%E6%B3%9B%E8%97%8D%E6%B3%9B%E7%B6%A0).json"))
+	var village = []
+	for(var i = 0; i < Object.keys(data['村里別']).length; i++) {
+		village.push(data['村里別'][i])
+	}
+	console.log(village);
+	var AllPartys = Object.keys(data).splice(2,19)
+	var AllPartys_without_BG = _.without(AllPartys, "中國國民黨","民主進步黨")
+	console.log(AllPartys);
+	console.log(AllPartys_without_BG);
+	AllPartys_each_value = []
+	for(var i = 0; i < AllPartys.length; i++) {
+		AllPartys_each_value.push(data[AllPartys[i]][village.indexOf(get_country_activities.value)])
+	}
+	console.log(AllPartys_each_value);
+	AllPartys_each_value_without_BG = []
+	for(var i = 0; i < AllPartys.length; i++) {
+		if(AllPartys[i] == "民主進步黨" || AllPartys[i] == "中國國民黨"){
+		}
+		else{AllPartys_each_value_without_BG.push(data[AllPartys[i]][village.indexOf(get_country_activities.value)])}
+	}
+	console.log(AllPartys_each_value_without_BG);
+	config.data.datasets.forEach(function(dataset) {
+		dataset.data = AllPartys_each_value
+	});
+	config_2.data.datasets.forEach(function(dataset) {
+		dataset.data = [
+						data['泛藍'][village.indexOf(get_country_activities.value)],
+						data['泛綠'][village.indexOf(get_country_activities.value)]
+					]
+	});
+	config_3.data.datasets.forEach(function(dataset) {
+		dataset.data = AllPartys_each_value_without_BG
+	});
+	window.myPie.update();
+	window.myPie2.update();
+	window.myPie3.update();
+});
+var city_name_in_url = encodeURIComponent(select_city.value);
+data = JSON.parse(get_subcount("https://raw.githubusercontent.com/a26796879/TW_vote_data/main/data/2020-%E4%B8%8D%E5%88%86%E5%8D%80%E7%AB%8B%E5%A7%94/2020%E4%B8%8D%E5%88%86%E5%8D%80-"+ city_name_in_url +"(add%20%E6%B3%9B%E8%97%8D%E6%B3%9B%E7%B6%A0).json"))
 var village = []
 for(var i = 0; i < Object.keys(data['村里別']).length; i++) {
 	village.push(data['村里別'][i])
 }
 console.log(village);
-var select = document.getElementById("get_country"); 
+var select_country = document.getElementById("get_country"); 
 	for(var i = 0; i < village.length; i++) {
 		var opt = village[i];
 		var el = document.createElement("option");
 		el.textContent = opt;
 		el.value = opt;
-		select.appendChild(el);}
+		select_country.appendChild(el);}
+
 console.log(data['村里別']); // this will show the info it in firebug console
 console.log(typeof(data['村里別'])); // this will show the info it in firebug console
 
@@ -141,27 +194,25 @@ var config_3 = {
 			var ctx3 = document.getElementById('chart-area-3').getContext('2d');
 			window.myPie3 = new Chart(ctx3, config_3);
 		};
-var activities = document.getElementById("get_country");
-
-activities.addEventListener("change", function() {
+var get_country_activities = document.getElementById("get_country");
+get_country_activities.addEventListener("change", function() {
 	AllPartys_each_value = []
 	for(var i = 0; i < AllPartys.length; i++) {
-		AllPartys_each_value.push(data[AllPartys[i]][village.indexOf(activities.value)])
+		AllPartys_each_value.push(data[AllPartys[i]][village.indexOf(get_country_activities.value)])
 	}
 	AllPartys_each_value_without_BG = []
 	for(var i = 0; i < AllPartys.length; i++) {
 		if(AllPartys[i] == "民主進步黨" || AllPartys[i] == "中國國民黨"){
 		}
-		else{AllPartys_each_value_without_BG.push(data[AllPartys[i]][village.indexOf(activities.value)])}
+		else{AllPartys_each_value_without_BG.push(data[AllPartys[i]][village.indexOf(get_country_activities.value)])}
 	}
-	//data['民主進步黨'][village.indexOf(activities.value)]
 	config.data.datasets.forEach(function(dataset) {
 		dataset.data = AllPartys_each_value
 	});
 	config_2.data.datasets.forEach(function(dataset) {
 		dataset.data = [
-						data['泛藍'][village.indexOf(activities.value)],
-						data['泛綠'][village.indexOf(activities.value)]
+						data['泛藍'][village.indexOf(get_country_activities.value)],
+						data['泛綠'][village.indexOf(get_country_activities.value)]
 					]
 	});
 	config_3.data.datasets.forEach(function(dataset) {
@@ -175,3 +226,4 @@ activities.addEventListener("change", function() {
 </script>
 </body>
 </html>
+
